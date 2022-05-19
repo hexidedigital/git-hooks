@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#Colors
+if [[ $CONSTANTS_INIT -ne 1 ]];
+ then
+    CONSTANTS_INIT=1
+
+    messageTypes=("feat" "fix" "docs" "text" "style" "refactor" "test" "chore" "perf" "ci" "build")
+
+    protectedBranches=("develop" "master" "dev" "stage" "prod" "test")
+fi

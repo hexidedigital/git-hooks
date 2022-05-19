@@ -1,0 +1,23 @@
+{
+    "name": "hexide-digital/git-hooks",
+    "description": "Git hooks",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrii Bilyk",
+            "email": "bilyk.a@hexide-digital.com"
+        }
+    ],
+    "keywords": [
+        "git",
+        "hooks"
+    ],
+    "require": {
+    },
+    "bin": [
+        "bin/git-hooks"
+    ],
+    "autoload": {},
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

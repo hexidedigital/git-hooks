@@ -1,0 +1,48 @@
+#!/bin/sh
+
+. "$(dirname "$0")/../colors"
+
+# FUNCTIONS
+success_message()
+{
+    printf "${GREEN}$1${ENDCOLOR}\n"
+}
+
+error_message()
+{
+    printf "${RED}$1${ENDCOLOR}\n"
+}
+
+invalid_commit_message_error()
+{
+  printf "${RED}************** Invalid Commit Message  **************${ENDCOLOR}\n"
+  printf "${WHITE}commit message:${ENDCOLOR} ${RED}$1${ENDCOLOR}\n"
+  printf "${WHITE}correct format:${ENDCOLOR} ${GREEN}<type>[scope]: <subject>${ENDCOLOR}\n"
+  printf "${WHITE}example:${ENDCOLOR} ${GREEN}docs: update README to add developer tips${ENDCOLOR}\n"
+
+  printf "\n"
+  printf "${YELLOW}type:${ENDCOLOR}\n"
+  printf "${YELLOW}  feat:${ENDCOLOR}      ${GRAY}A new feature.${ENDCOLOR}\n"
+  printf "${YELLOW}  fix:${ENDCOLOR}       ${GRAY}A bug fix.${ENDCOLOR}\n"
+  printf "${YELLOW}  docs:${ENDCOLOR}      ${GRAY}Documentation only changes.${ENDCOLOR}\n"
+  printf "${YELLOW}  text:${ENDCOLOR}      ${GRAY}Changes to update texts (typos, etc).${ENDCOLOR}\n"
+  printf "${YELLOW}  style:${ENDCOLOR}     ${GRAY}Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc).${ENDCOLOR}\n"
+  printf "${YELLOW}  refactor:${ENDCOLOR}  ${GRAY}A code change that neither fixes a bug nor adds a feature.${ENDCOLOR}\n"
+  printf "${YELLOW}  test:${ENDCOLOR}      ${GRAY}Adding missing tests or correcting existing ones.${ENDCOLOR}\n"
+  printf "${YELLOW}  chore:${ENDCOLOR}     ${GRAY}Changes to the build process or auxiliary tools and libraries such as documentation generation.${ENDCOLOR}\n"
+  printf "${YELLOW}  perf:${ENDCOLOR}      ${GRAY}A code change that improves performance.${ENDCOLOR}\n"
+  printf "${YELLOW}  ci:${ENDCOLOR}        ${GRAY}Changes to your CI configuration files and scripts.${ENDCOLOR}\n"
+  printf "${YELLOW}  build:${ENDCOLOR}     ${GRAY}Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm).${ENDCOLOR}\n"
+  printf "${YELLOW}  temp:${ENDCOLOR}      ${GRAY}Temporary commit that won\'t be included in your CHANGELOG.${ENDCOLOR}\n"
+
+  printf "\n"
+  printf "${YELLOW}scope:${ENDCOLOR}\n"
+  printf "  ${GRAY}Optional, can be anything specifying the scope of the commit change.${ENDCOLOR}\n"
+  printf "  ${GRAY}In Web Development, scope can be a page, a module or a component.${ENDCOLOR}\n"
+
+  printf "\n"
+  printf "${YELLOW}subject:${ENDCOLOR}\n"
+  printf "  ${GRAY}Brief summary of the change in present tense. Not capitalized. No period at the end.${ENDCOLOR}\n"
+  printf "\n"
+}
+

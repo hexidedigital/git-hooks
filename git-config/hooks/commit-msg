@@ -1,0 +1,18 @@
+#!/bin/sh
+
+. "$(dirname "$0")/../constants"
+. "$(dirname "$0")/../functions"
+
+types=$(IFS="|" ; echo "${messageTypes[*]}")
+COMMIT_REGEX="^(${types}|temp)(\([a-zA-Z0-9 \/_,.-]+\))?: .{3,59}$"
+
+commit_message="$(cat $1)"
+
+
+if [[ $commit_message =~ $COMMIT_REGEX ]];
+then
+    success_message "Nice commit message!"
+else
+    invalid_commit_message_error "$commit_message"
+    exit 1
+fi

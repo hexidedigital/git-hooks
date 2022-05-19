@@ -1,0 +1,147 @@
+#!/usr/bin/env php
+<?php
+
+
+$content = file_get_contents('./composer.json');
+
+// there is not scripts
+if (strpos($content, '"scripts": {') === false) {
+    $seed = "\n    \"scripts\": {\n    }";
+    $regex = "/(.*)([\n\r\s]+)(})([\n\r\s]+)$/";
+    $content = preg_replace($regex, "$1,$seed$2$3$4", $content);
+}
+
+// there is not post-install-cmd
+if (strpos($content, '"post-install-cmd": [') === false) {
+    $seed = "\n        \"post-install-cmd\": [\n        ]";
+
+    $regex = "/(\"scripts\": {)([\n\r\s]+)(.*)(})([\n\r\s]+)/";
+
+    // need to add comma
+    if (isset($matches[3]) && !empty($matches[3])) {
+        $seed .= ',';
+    }
+
+    $content = preg_replace($regex, "$1$seed$2$3$4$5", $content);
+}
+
+// there is not post-install-cmd
+if (strpos($content, '"post-update-cmd": [') === false) {
+    $seed = "\n        \"post-update-cmd\": [\n        ]";
+
+    $regex = "/(\"scripts\": {)([\n\r\s]+)(.*)(})([\n\r\s]+)/s";
+//    preg_match($regex, $content, $matches);
+//    print_r($matches);
+
+    // need to add comma
+    if (isset($matches[3]) && !empty($matches[3])) {
+        $seed .= ',';
+    }
+
+    $content = preg_replace($regex, "$1$seed$2$3$4$5", $content);
+}
+
+
+if (!isset($argv[1]) || $argv[1] === 'help') {
+    showHelpMessage();
+}
+
+
+if (isset($argv[1]) && $argv[1] === 'init') {
+    $command = 'git config core.hooksPath ./vendor/hexide-digital/git-hooks/git-config/hooks';
+    $content = seedComposer($content, $command, 'post-install-cmd');
+    $content = seedComposer($content, $command, 'post-update-cmd');
+}
+
+
+if (isset($argv[1]) && $argv[1] === 'publish') {
+    $cwd = getcwd();
+
+    if (file_exists($cwd.'/git-config')) {
+        echo "\e[0;31mConfig folder (./git-config) already exists! SKipping...\e[0m\n";
+    } else {
+        xcopy(__DIR__.'/../git-config', $cwd.'/git-config');
+        echo "\e[0;32mConfig folder (./git-config) has been published!\e[0m\n";
+    }
+
+    $command = 'git config core.hooksPath ./git-config/hooks';
+    $content = seedComposer($content, $command, 'post-install-cmd');
+    $content = seedComposer($content, $command, 'post-update-cmd');
+}
+
+
+file_put_contents('./composer.json', $content);
+
+function seedComposer($content, $command, $section)
+{
+
+    $regex = "/(\"".$section."\": )(\[)(.*)(\])/sU";
+    preg_match($regex, $content, $matches);
+    $rows = isset($matches[3]) ? explode(",", trim($matches[3])) : [];
+    $commands = [];
+
+
+    foreach ($rows as $row) {
+        $row = trim($row);
+
+        if (empty($row)) {
+            continue;
+        }
+
+        if (strpos($row, "core.hooksPath") === false) {
+            $commands[] = $row;
+        }
+    }
+
+
+    $commands[] = "\"".$command."\"";
+
+    $commands = array_map(
+        function ($command) {
+
+            return "\n            ".$command;
+        },
+        $commands
+    );
+
+    return preg_replace($regex, "$1[".implode(",", $commands)."\n        ]", $content);
+}
+
+function xcopy($src, $dest)
+{
+
+    @mkdir($dest);
+    foreach (scandir($src) as $file) {
+        $srcfile = rtrim($src, '/').'/'.$file;
+        $destfile = rtrim($dest, '/').'/'.$file;
+        if (!is_readable($srcfile)) {
+            continue;
+        }
+        if ($file != '.' && $file != '..') {
+            if (is_dir($srcfile)) {
+                if (!file_exists($destfile)) {
+                    mkdir($destfile);
+                }
+                xcopy($srcfile, $destfile);
+            } else {
+                copy($srcfile, $destfile);
+            }
+        }
+    }
+}
+
+function showHelpMessage()
+{
+
+    $NC = "\e[0m";
+    $GREEN = "\e[0;32m";
+    $YELLOW = "\e[1;33m";
+
+    echo "{$GREEN}Git hooks helper{$NC}\n";
+    echo "\n";
+    echo "{$YELLOW}Usage:{$NC}\n";
+    echo "  git-hooks COMMAND\n";
+    echo "\n";
+    echo "  ${GREEN}git-hooks init{$NC}        Update {$YELLOW}composer.json{$NC} with {$YELLOW}post-install-cmd{$NC} and {$YELLOW}post-update-cmd{$NC} commands\n";
+    echo "  ${GREEN}git-hooks publish{$NC}     Publish hooks folder to project's root and update {$YELLOW}composer.json{$NC}\n";
+}

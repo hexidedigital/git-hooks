@@ -1,0 +1,63 @@
+#!/bin/sh
+
+. "$(dirname "$0")/../colors"
+. "$(dirname "$0")/../constants"
+. "$(dirname "$0")/../functions"
+
+
+# set this to your active development branch
+develop_branch="develop"
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+# only check commit messages on protected branches
+if [[ " ${protectedBranches[*]} " =~ " ${current_branch} " ]]; then
+
+    types=$(IFS="|" ; echo "${messageTypes[*]}")
+    COMMIT_REGEX="^(${types})(\([a-zA-Z0-9 \/_,.-]+\))?: .{3,59}$"
+    remote="$1"
+    url="$2"
+
+    z40=0000000000000000000000000000000000000000
+    IFS=' '
+    while read local_ref local_sha remote_ref remote_sha
+    do
+#        echo "local_ref $local_ref"
+#        echo "local_sha $local_sha"
+#        echo "remote_ref $remote_ref"
+#        echo "remote_sha $remote_sha"
+
+        if [ "$local_sha" = $z40 ]
+        then
+            echo "Deleting files, OK."
+        else
+            if [ "$remote_sha" = $z40 ]
+            then
+                # New branch, examine all commits
+                    range="$local_sha"
+            else
+                # Update to existing branch, examine new commits
+                range="$remote_sha..$local_sha"
+            fi
+
+            printf "Checking range: ${YELLOW}$range${ENDCOLOR}\n\n"
+
+            IFS=$'\n'
+            commits=( $(git log --pretty=format:"%s" --date=short --reverse $range) )
+
+            # Loop over each commit
+            for commit_message in "${commits[@]}"
+            do
+                if [[ ! $commit_message =~ $COMMIT_REGEX ]];
+                    then
+                        invalid_commit_message_error "$commit_message"
+                        exit 1
+                    fi
+            done
+        fi
+    done
+fi
+
+phpcs
+php artisan test
+
+success_message "pre-push hook succeed!"

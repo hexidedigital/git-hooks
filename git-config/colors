@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#Colors
+if [[ $COLORS_INIT -ne 1 ]];
+ then
+    COLORS_INIT=1
+    RED="\e[31m"
+    GREEN="\e[32m"
+    YELLOW="\e[33m"
+    GRAY="\e[37m"
+    WHITE="\e[38m"
+    ENDCOLOR="\e[0m"
+fi
