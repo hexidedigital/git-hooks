@@ -15,7 +15,8 @@ if (strpos($content, '"scripts": {') === false) {
 if (strpos($content, '"post-install-cmd": [') === false) {
     $seed = "\n        \"post-install-cmd\": [\n        ]";
 
-    $regex = "/(\"scripts\": {)([\n\r\s]+)(.*)(})([\n\r\s]+)/";
+    $regex = "/(\"scripts\": {)([\n\r\s]+)(.*)(})([\n\r\s]+)/sU";
+    preg_match($regex, $content, $matches);
 
     // need to add comma
     if (isset($matches[3]) && !empty($matches[3])) {
@@ -29,9 +30,8 @@ if (strpos($content, '"post-install-cmd": [') === false) {
 if (strpos($content, '"post-update-cmd": [') === false) {
     $seed = "\n        \"post-update-cmd\": [\n        ]";
 
-    $regex = "/(\"scripts\": {)([\n\r\s]+)(.*)(})([\n\r\s]+)/s";
-//    preg_match($regex, $content, $matches);
-//    print_r($matches);
+    $regex = "/(\"scripts\": {)([\n\r\s]+)(.*)(})([\n\r\s]+)/sU";
+    preg_match($regex, $content, $matches);
 
     // need to add comma
     if (isset($matches[3]) && !empty($matches[3])) {
