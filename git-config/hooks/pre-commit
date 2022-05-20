@@ -1,4 +1,5 @@
 #!/bin/sh
 
 echo committing as $(git config user.name)
-phpcs
+#uncomment this line to use phpcs linter
+#phpcs

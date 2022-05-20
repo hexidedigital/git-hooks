@@ -57,7 +57,10 @@ if [[ " ${protectedBranches[*]} " =~ " ${current_branch} " ]]; then
     done
 fi
 
-phpcs
-php artisan test
+#uncomment this line to use phpcs linter
+#phpcs
+
+#uncomment this line to use test the app
+#php artisan test
 
 success_message "pre-push hook succeed!"
