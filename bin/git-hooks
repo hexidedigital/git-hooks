@@ -61,6 +61,9 @@ if (isset($argv[1]) && $argv[1] === 'publish') {
         echo "\e[0;31mConfig folder (./git-config) already exists! SKipping...\e[0m\n";
     } else {
         xcopy(__DIR__.'/../git-config', $cwd.'/git-config');
+        chmod($cwd.'/git-config/hooks/commit-msg', 0755);
+        chmod($cwd.'/git-config/hooks/pre-commit', 0755);
+        chmod($cwd.'/git-config/hooks/pre-push', 0755);
         echo "\e[0;32mConfig folder (./git-config) has been published!\e[0m\n";
     }
 
