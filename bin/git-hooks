@@ -51,6 +51,7 @@ if (isset($argv[1]) && $argv[1] === 'init') {
     $command = 'git config core.hooksPath ./vendor/hexide-digital/git-hooks/git-config/hooks';
     $content = seedComposer($content, $command, 'post-install-cmd');
     $content = seedComposer($content, $command, 'post-update-cmd');
+    shell_exec($command);
 }
 
 
@@ -70,6 +71,7 @@ if (isset($argv[1]) && $argv[1] === 'publish') {
     $command = 'git config core.hooksPath ./git-config/hooks';
     $content = seedComposer($content, $command, 'post-install-cmd');
     $content = seedComposer($content, $command, 'post-update-cmd');
+    shell_exec($command);
 }
 
 
